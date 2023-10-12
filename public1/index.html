@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Budget</title>
+    <meta name="description" content="A free personal budget app">
+    <meta name="keywords" content="app free budget finance">
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            width: 1000px;
+            height: 500px;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        path.slice {
+            stroke: grey;
+            stroke-width: 2px;
+        }
+
+        polyline {
+            opacity: .3;
+            stroke: black;
+            stroke-width: 2px;
+            fill: none;
+        }
+    </style>
+
+    <a href="#main" class="skip">Skip to content</a>
+
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/login.html">Login</a></li>
+            <li><a href="https://google.com">Google</a></li>
+        </ul>
+    </nav>
+
+    <div class="hero">
+        <h1>Personal Budget</h1>
+        <h2>A personal-budget management app</h2>
+    </div>
+
+    <main class="center" id="main">
+
+        <div class="page-area">
+            <article>
+                <h1>Stay on track</h1>
+                <p>
+                    Do you know where you are spending your money? If you really stop to track it down,
+                    you would get surprised! Proper budget management depends on real data... and this
+                    app will help you with that!
+                </p>
+            </article>
+    
+            <article>
+                <h1>Alerts</h1>
+                <p>
+                    What if your clothing budget ended? You will get an alert. The goal is to never go over the budget.
+                </p>
+            </article>
+    
+            <article>
+                <h1>Results</h1>
+                <p>
+                    People who stick to a financial plan, budgeting every expense, get out of debt faster!
+                    Also, they to live happier lives... since they expend without guilt or fear... 
+                    because they know it is all good and accounted for.
+                </p>
+            </article>
+    
+            <article>
+                <h1>Free</h1>
+                <p>
+                    This app is free!!! And you are the only one holding your data!
+                </p>
+            </article>
+    
+            <article>
+                <h1>Stay on track</h1>
+                <p>
+                    Do you know where you are spending your money? If you really stop to track it down,
+                    you would get surprised! Proper budget management depends on real data... and this
+                    app will help you with that!
+                </p>
+            </article>
+    
+            <article>
+                <h1>Alerts</h1>
+                <p>
+                    What if your clothing budget ended? You will get an alert. The goal is to never go over the budget.
+                </p>
+            </article>
+    
+            <article>
+                <h1>Results</h1>
+                <p>
+                    People who stick to a financial plan, budgeting every expense, get out of debt faster!
+                    Also, they to live happier lives... since they expend without guilt or fear... 
+                    because they know it is all good and accounted for.
+                </p>
+            </article>
+            <article>
+                <h1>Chart1</h1>
+                <p>
+                    <canvas id="myChart" width="400" height="400"></canvas>
+                </p>
+            </article>
+            <button class="randomize">randomize</button>
+            <h1>Chart2</h1>
+            <article>
+                <svg id="donut" width="400" height="400"></svg>
+            </article>
+                
+        </div>
+
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.20.0/axios.min.js"
+        integrity="sha512-quHCp3WbBNkwLfYUMd+KwBAgpVukJu5MncuQaWXgCrfgcxCJAq/fo+oqrRKOj+UKEmyMCG3tb8RB63W+EmrOBg=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"
+        integrity="sha512-s+xg36jbIujB2S2VKfpGmlC3T5V2TF3lY48DX7u2r9XzGzgPsa6wTpOQA7J9iffvdeBN0q9tKzRxVxw1JviZPg=="
+        crossorigin="anonymous"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    
+    <script>
+        var dataSource1 = {
+            datasets: [{
+                data: [],
+                backgroundColor: []
+            }],
+            labels: []
+        };
+
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("id", "donut")
+            .append("g");
+
+        svg.append("g")
+            .attr("class", "slices");
+        svg.append("g")
+            .attr("class", "labels");
+        svg.append("g")
+            .attr("class", "lines");
+
+        var width = 960,
+            height = 450,
+            radius = Math.min(width, height) / 2;
+
+        var pie = d3.layout.pie()
+            .sort(null)
+            .value(function (d) {
+                return d.value;
+            });
+
+        var arc = d3.svg.arc()
+            .outerRadius(radius * 0.8)
+            .innerRadius(radius * 0.4);
+
+        var outerArc = d3.svg.arc()
+            .innerRadius(radius * 0.9)
+            .outerRadius(radius * 0.9);
+
+        svg.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+        var key = function (d) { return d.data.label; };
+
+        var color = d3.scale.ordinal()
+            .range(d3.schemeCategory10);
+
+            function randomData() {
+    const newData = color.domain().map(function (label) {
+        return { title: label, value: Math.random(), color: color(label) };
+    });
+    console.log("Random Data:", newData);
+    return newData;
+}
+        change(randomData());
+
+    d3.select(".randomize")
+    .on("click", function () {
+        console.log("Randomize Button Clicked");
+        axios.get('http://localhost:3000/budget')
+            .then(function (res) {
+                var newData = res.data.myBudget.map(entry => ({ title: entry.title, value: entry.value, color: entry.color }));
+                console.log("New Data:", newData);
+                updateD3Chart(newData);
+            })
+            .catch(function (error) {
+                console.error('Error fetching random data:', error);
+            });
+    });
+
+        function change(data) {
+    /* ------- PIE SLICES -------*/
+    var slice = svg.select(".slices").selectAll("path.slice")
+        .data(pie(data));
+
+    slice.enter()
+        .insert("path")
+        .style("fill", function (d) {
+            return d.data.color;  // Use color directly for fill
+        })
+        .attr("class", "slice");
+
+    slice
+        .transition().duration(1000)
+        .attrTween("d", function (d) {
+            this._current = this._current || d;
+            var interpolate = d3.interpolate(this._current || { startAngle: 0, endAngle: 0 }, d);
+            this._current = interpolate(0);
+            return function (t) {
+                return arc(interpolate(t));
+            };
+        });
+
+    slice.exit()
+        .remove();
+        console.log("Change function called with data:", data);
+
+    /* ------- TEXT LABELS -------*/
+
+var text = svg.select(".labels").selectAll("text")
+    .data(pie(data));
+
+text.enter()
+    .append("text")
+    .attr("dy", ".35em")
+    .text(function (d) {
+        return d.data.title;  // Display the label as the text
+    })
+    .attr("fill", "black")
+
+function midAngle(d) {
+    return d.startAngle + (d.endAngle - d.startAngle) / 2;
+}
+
+text.transition().duration(1000)
+    .attrTween("transform", function (d) {
+        this._current = this._current || d;
+        var interpolate = d3.interpolate(this._current, d);
+        this._current = interpolate(0);
+        return function (t) {
+            var d2 = interpolate(t);
+            var pos = outerArc.centroid(d2);
+            pos[0] = radius * (midAngle(d2) < Math.PI ? 1 : -1);
+            return "translate(" + pos + ")";
+        };
+    })
+    .styleTween("text-anchor", function (d) {
+        this._current = this._current || d;
+        var interpolate = d3.interpolate(this._current, d);
+        this._current = interpolate(0);
+        return function (t) {
+            var d2 = interpolate(t);
+            return midAngle(d2) < Math.PI ? "start" : "end";
+        };
+    })
+    .text(function (d) {
+        return d.data.title;  // Display the label as the text
+    });
+
+text.exit()
+    .remove();
+
+
+    /* ------- SLICE TO TEXT POLYLINES -------*/
+
+    var polyline = svg.select(".lines").selectAll("polyline")
+        .data(pie(data));
+
+    polyline.enter()
+        .append("polyline");
+
+    polyline.transition().duration(1000)
+        .attrTween("points", function (d) {
+            this._current = this._current || d;
+            var interpolate = d3.interpolate(this._current, d);
+            this._current = interpolate(0);
+            return function (t) {
+                var d2 = interpolate(t);
+                var pos = outerArc.centroid(d2);
+                pos[0] = radius * 0.95 * (midAngle(d2) < Math.PI ? 1 : -1);
+                return [arc.centroid(d2), outerArc.centroid(d2), pos];
+            };
+        });
+
+    polyline.exit()
+        .remove();
+}
+        function createChart() {
+            var ctx_2 = document.getElementById('myChart').getContext('2d');
+            var myPieChart = new Chart(ctx_2, {
+                type: 'pie',
+                data: dataSource1
+            });
+        }
+
+        function updateChart(data) {
+            dataSource1.datasets[0].data = data.map(entry => entry.value);
+            dataSource1.labels = data.map(entry => entry.title);
+            dataSource1.datasets[0].backgroundColor = data.map(entry => entry.color);
+            createChart();
+        }
+
+        function createD3Chart() {
+            var ctx_2 = document.getElementById('donut').getContext('2d');
+    var myPieChart = new Chart(ctx_2, {
+        type: 'donut',
+        data: dataSource1
+    });
+            change(data);
+        }
+
+        function updateD3Chart(data) {
+            console.log("Update D3 Chart with Data:", data);
+    //         dataSource1.datasets[0].data = data.map(entry => entry.value);
+    // dataSource1.labels = data.map(entry => entry.title);
+    // dataSource1.datasets[0].backgroundColor = data.map(entry => entry.color);
+    // console.log("Updated DataSource:", dataSource1);
+    //         change(data);
+    var isOldDataFormat = data[0] && data[0]._id !== undefined;
+
+    // Map the data to the format expected by the chart
+    var formattedData = isOldDataFormat
+        ? data.map(entry => ({ title: entry.title, value: entry.value, color: entry.color }))
+        : data;
+
+    dataSource1.datasets[0].data = formattedData.map(entry => entry.value);
+    dataSource1.labels = formattedData.map(entry => entry.title);
+    dataSource1.datasets[0].backgroundColor = formattedData.map(entry => entry.color);
+
+    console.log("Updated DataSource:", dataSource1);
+    change(formattedData);
+        }
+
+        function fetchAndUpdateData() {
+            // Fetching data for Chart.js
+            axios.get('http://localhost:3000/budget')
+                .then(function (res) {
+                    console.log(res);
+                    updateChart(res.data.myBudget);
+                });
+
+            // Fetching data for D3.js
+            axios.get('http://localhost:3000/budget')
+                .then(function (res) {
+                    console.log(res);
+            console.log("D3.js Data:", res.data.myBudget.map(entry => entry.value));
+                    updateD3Chart(res.data.myBudget);
+                });
+        }
+
+        fetchAndUpdateData();
+    </script>
+    <footer class="bottom">
+        <div class="center">
+            All rights reserved &copy; Swetha Chintala
+        </div>
+    </footer>
+
+</body>
+
+</html>
