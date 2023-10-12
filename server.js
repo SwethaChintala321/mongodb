@@ -1,61 +1,85 @@
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
+
 const app = express();
 const port = 3000;
 
 app.use(cors());
+app.use(express.json());
 
-const budget = {
-    myBudget: [
-    {
-        title: 'Eat out',
-        budget: 30
+mongoose.connect('mongodb://localhost:27017/budget', { useNewUrlParser: true, useUnifiedTopology: true });
+
+const budgetSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true
     },
-    {
-        title: 'Rent',
-        budget: 350
+    value: {
+        type: Number,
+        required: true
     },
-    {
-        title: 'Groceries',
-        budget: 90
-    },
-    {
-        title: 'College',
-        budget: 200
-    },
-    {
-        title: 'Movies',
-        budget: 30
-    },
-    {
-        title: 'Aesthetics',
-        budget: 40
-    },
-    {
-        title: 'Travel',
-        budget: 50
-    },
-    {
-        title: 'Gadgets',
-        budget: 100
-    },
-    {
-        title: 'Trash',
-        budget: 10
-    },
-    {
-        title: 'Washroom Products',
-        budget: 10
-    },
-    {
-        Title: 'Miscellaneous',
-        budget: 10
+    color: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function (v) {
+                // Validate hexadecimal color code
+                return /^#[0-9A-Fa-f]{6}$/i.test(v);
+            },
+            message: props => `${props.value} is not a valid hexadecimal color code!`
+        }
     }
-]
-};
+});
 
-app.get('/budget', (req, res) => {
-  res.json(budget);
+const Budget = mongoose.model('Budget', budgetSchema);
+
+app.use('/', express.static('public1'));
+
+
+// Fetching data endpoint
+app.get('/budget', async (req, res) => {
+    try {
+        const budgets = await Budget.find();
+        res.json({ myBudget: budgets });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Updating data endpoint
+app.put('/budget/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { value, color } = req.body;
+
+        const updatedBudget = await Budget.findByIdAndUpdate(id, { value, color }, { new: true });
+
+        if (!updatedBudget) {
+            return res.status(404).json({ error: 'Entry not found' });
+        }
+
+        res.json({ message: 'Entry updated successfully', updatedBudget });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Adding a new data endpoint
+app.post('/budget', async (req, res) => {
+    try {
+        const { title, value, color } = req.body;
+
+        const newBudget = new Budget({ title, value, color });
+        const savedBudget = await newBudget.save();
+
+        res.status(201).json({ message: 'Entry added successfully', savedBudget });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 app.listen(port, () => {
