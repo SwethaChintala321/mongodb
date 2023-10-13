@@ -68,7 +68,7 @@ app.put('/budget/:id', async (req, res) => {
 });
 
 // Adding a new data endpoint
-app.post('/budget', async (req, res) => {
+app.post('/add-budget', async (req, res) => {
     try {
         const { title, value, color } = req.body;
 
