@@ -34,6 +34,20 @@ const budgetSchema = new mongoose.Schema({
 
 const Budget = mongoose.model('Budget', budgetSchema);
 
+const sampleData = [
+    { title: 'Eat Out', value: 300, color: '#4CAF50' },
+    { title: 'Entertainment', value: 150, color: '#FFC107' },
+    { title: 'Groceries', value: 200, color: '#2196F3' },
+    { title: 'College', value: 300, color: '#4CAF50' },
+    { title: 'Washroom Products', value: 150, color: '#2196F3' },
+    { title: 'Aesthetics', value: 200, color: '#4CAF50' },
+    { title: 'Travel', value: 300, color: '#FFC107' },
+    { title: 'Gadgets', value: 150, color: '#2196F3' },
+    { title: 'Trash', value: 200, color: '#4CAF50' },
+    { title: 'Movies', value: 300, color: '#FFC107' },
+    { title: 'Miscellaneous', value: 150, color: '#2196F3' }
+];
+
 app.use('/', express.static('public1'));
 
 
